@@ -8,12 +8,11 @@ from sklearn.neighbors import KNeighborsClassifier
 app = Flask(__name__)
 
 
-def sklearn_knn_predict(trainX, trainy, testX, distance_metric, k):
+def sklearn_knn_predict(trainX, trainy, validX, distance_metric, k, validationy):
     # create KNeighborClassifier instance
     kNC = KNeighborsClassifier(n_neighbors=k, algorithm='brute', metric=distance_metric)
     kNC.fit(trainX, trainy)
-    # print(kNC.score(XTST, YTST))
-    return kNC.predict(testX)
+    return [(distance_metric,k) , kNC.score(validX, validationy)]
 
 
 def load(csv_file):
