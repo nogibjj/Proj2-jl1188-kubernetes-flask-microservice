@@ -40,61 +40,31 @@ def predictRainInCity(cityName):
     # scale features
     cityScaler = StandardScaler()
     cityScaler.fit(X_train)
-    cityScaler.mean_
+    # cityScaler.mean_
     cityScaler.transform(X_train)
     cityScaler.transform(X_test)
     # calculate accuracy
     trainedCity = sklearn_knn_predict(cityScaler.transform(X_train), Y_train, cityScaler.transform(X_test), 'euclidean', 11, Y_test)
+    res = {"name": str(cityName), "accuracy": str(trainedCity[1])}
     print(str(cityName))
     print("The accuracy is: " + str(trainedCity[1]))
-    # result = "The accuracy is: " + str(trainedCity[1])
-    return 0
-
-def change(amount):
-    # calculate the resultant change and store the result (res)
-    res = []
-    coins = [1,5,10,25] # value of pennies, nickels, dimes, quarters
-    coin_lookup = {25: "quarters", 10: "dimes", 5: "nickels", 1: "pennies"}
-
-    # divide the amount*100 (the amount in cents) by a coin value
-    # record the number of coins that evenly divide and the remainder
-    coin = coins.pop()
-    num, rem  = divmod(int(amount*100), coin)
-    # append the coin type and number of coins that had no remainder
-    res.append({num:coin_lookup[coin]})
-
-    # while there is still some remainder, continue adding coins to the result
-    while rem > 0:
-        coin = coins.pop()
-        num, rem = divmod(rem, coin)
-        if num:
-            if coin in coin_lookup:
-                res.append({num:coin_lookup[coin]})
     return res
+
 
 
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
     print("I am inside hello world")
-    return 'Hello World! I can make change at route: /change'
+    return 'Hello World! I can calculate my knn prediction accuracy at route: /accuracy/<cityname>. List of Cities: Canberra, GoldCoast, Hobart, Nuriootpa, Perth, Sydney, WaggaWagga, Wollongong'
 
-@app.route('/change/<dollar>/<cents>')
-def changeroute(dollar, cents):
-    print(f"Make Change for {dollar}.{cents}")
-    amount = f"{dollar}.{cents}"
-    result = change(float(amount))
+@app.route('/accuracy/<cityname>')
+def accuracyRoute(cityname):
+    print(f"Calculating the accuracy of my trained knn model for {cityname}.")
+    result = predictRainInCity(cityname)
     return jsonify(result)
     
     
-@app.route('/100/change/<dollar>/<cents>')
-def change100route(dollar, cents):
-    print(f"Make Change for {dollar}.{cents}")
-    amount = f"{dollar}.{cents}"
-    amount100 = float(amount) * 100
-    print(f"This is the {amount} X 100")
-    result = change(amount100)
-    return jsonify(result)
 
 
 if __name__ == '__main__':
