@@ -49,6 +49,15 @@ Small Flask Microservice that uses sklearn knn to make a prediction of city's we
 
 * Stop the running docker container by using `control-c` command
 
+# Pushed Image to AWS ECR (Elastic Container Registry)
+
+* Pull with the following command: `docker pull public.ecr.aws/x2v3g2s0/flask-predict:latest`
+
+* Run the docker image: `docker run -it --rm -p 8080:8080 public.ecr.aws/x2v3g2s0/flask-predict:latest`
+
+# Pushed Image to Docker Hub
+* Pull with: `docker pull selinaliu/knn-rain-prediction-accuracy`
+
 ## Running Kubernetes Locally
 * Install [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) and [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
@@ -59,50 +68,39 @@ Small Flask Microservice that uses sklearn knn to make a prediction of city's we
   - Otherwise, minikube download kubectl for you `minikube kubectl -- get po -A`
   - Adding the alias `alias kubectl="minikube kubectl --"`
 
-* Pods, application
+* Deploy
   - See the node by typing: `kubectl get nodes`
+
+  - Create a deployment: `kubectl create deployment knn-predict --image=registry.hub.docker.com/selinaliu/knn-rain-prediction-accuracy` or run `make deploy` which have the same command
   ```bash
-  NAME       STATUS   ROLES           AGE     VERSION
-  minikube   Ready    control-plane   9m35s   v1.26.1
+  deployment.apps/knn-predict created
   ```
-  - Apply the YAML configuration: `kubectl apply -f kube-rain-prediction.yaml` or run `make run-kube` which have the same command
+  - View the deployments with: `kubectl get deployments`
   ```bash
-  service/rain-prediction-service created
-  deployment.apps/knn-rain created
+  NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+  knn-predict   0/1     1            0           10s
   ```
-  - See the pods with: `kubectl get pods`
+  - Create service and expose it : `kubectl expose deployment knn-predict --type=LoadBalancer --port=8080`
   ```bash
-  NAME                        READY   STATUS              RESTARTS   AGE
-  knn-rain-5c84bc876b-mp928   0/1     ErrImageNeverPull   0          19s
-  knn-rain-5c84bc876b-psk6k   0/1     ErrImageNeverPull   0          19s
-  knn-rain-5c84bc876b-vvd7g   0/1     ErrImageNeverPull   0          19s
+  service/knn-predict exposed
   ```
-  - Describe services with : `kubectl describe services rain-prediction-service`
+  - View services: `kubectl get service knn-predict`
   ```bash
-  Name:                     rain-prediction-service
-  Namespace:                default
-  Labels:                   <none>
-  Annotations:              <none>
-  Selector:                 app=knn-rain
-  Type:                     LoadBalancer
-  IP Family Policy:         SingleStack
-  IP Families:              IPv4
-  IP:                       10.110.253.30
-  IPs:                      10.110.253.30
-  Port:                     <unset>  8080/TCP
-  TargetPort:               8080/TCP
-  NodePort:                 <unset>  32456/TCP
-  Endpoints:                
-  Session Affinity:         None
-  External Traffic Policy:  Cluster
-  Events:                   <none>
+  NAME          TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+  knn-predict   LoadBalancer   10.101.152.34   <pending>     8080:32535/TCP   13s
   ```
+  - `minikube service knn-predict --url`
+  ```bash
+  http://127.0.0.1:56821
+  ❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
+  ```
+  - Curl web service in a new terminal: `curl http://127.0.0.1:56821/accuracy/Canberra`
 
 * Invoke with `make invoke`
 
 * Cleanup
-- Delete the service `kubectl delete services rain-prediction-service`
-- Delete the deployment `kubectl delete deployment knn-rain`
+- Delete the service `kubectl delete services knn-predict`
+- Delete the deployment `kubectl delete deployment knn-predict`
 
 
 
@@ -135,6 +133,7 @@ Small Flask Microservice that uses sklearn knn to make a prediction of city's we
 * Noah Gift Flask Change [flask-change-microservice](https://github.com/noahgift/flask-change-microservice)
 * create Kubernetes Service, YAML [Use a Service to Access an Application in a Cluster](https://kubernetes.io/docs/tasks/access-application-cluster/service-access-application-cluster/) 
 * Step-by-step Guide [Get started with Kubernetes (using Python)](https://kubernetes.io/blog/2019/07/23/get-started-with-kubernetes-using-python/)
+* Kubernetes deployment from image in Dockerhub[coursera-applied-de-kubernetes-lab](https://github.com/nogibjj/coursera-applied-de-kubernetes-lab)
 
 
 

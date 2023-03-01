@@ -22,3 +22,6 @@ run-kube:
 	kubectl apply -f kube-rain-prediction.yaml
 
 all: install lint
+
+deploy:
+	kubectl create deployment knn-predict --image=registry.hub.docker.com/selinaliu/knn-rain-prediction-accuracy
