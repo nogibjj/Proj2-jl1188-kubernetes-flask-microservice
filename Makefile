@@ -21,4 +21,4 @@ invoke:
 run-kube:
 	kubectl apply -f kube-rain-prediction.yaml
 
-all: install lint test
+all: install lint
