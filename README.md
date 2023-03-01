@@ -49,14 +49,16 @@ Small Flask Microservice that uses sklearn knn to make a prediction of city's we
 
 * Stop the running docker container by using `control-c` command
 
-# Pushed Image to AWS ECR (Elastic Container Registry)
+# Pushed Image to Docker Hub (fully workable)
+* Pull with: `docker pull selinaliu/knn-rain-prediction-accuracy`
+
+# Pushed Image to AWS ECR (not full workable)
 
 * Pull with the following command: `docker pull public.ecr.aws/x2v3g2s0/flask-predict:latest`
 
 * Run the docker image: `docker run -it --rm -p 8080:8080 public.ecr.aws/x2v3g2s0/flask-predict:latest`
 
-# Pushed Image to Docker Hub
-* Pull with: `docker pull selinaliu/knn-rain-prediction-accuracy`
+
 
 ## Running Kubernetes Locally
 * Install [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) and [Minikube](https://minikube.sigs.k8s.io/docs/start/)
