@@ -6,6 +6,6 @@ class QuickstartUser(HttpUser):
 
     @task
     def hello_world(self):
-        self.client.get("/change/1/34")
+        self.client.get("/accuracy/GoldCoast")
 
 
